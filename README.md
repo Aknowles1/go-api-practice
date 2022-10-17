@@ -239,5 +239,5 @@ apply the ingress for the go api:
 <br />
 
 curl endpoint to see count increase:
-```curl --header "Host: api.com" localhost:80/count```
+```curl --header "Host: api.com" localhost:80/incriment```
 
