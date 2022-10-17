@@ -60,7 +60,7 @@ query API:<br />
 <br />
 the above curl works, as kind is configured to bind the hostport, to the container port thats running kubernetes (kind - Kubernetes-IN-Docker)
 <br />
-As mentioned above, the api will persist the counter upon pod deletion of either mysql or the python api itself, as mysql is backed by a persistent volume.
+As mentioned above, the api will persist the counter upon pod deletion of either mysql or the go api itself, as mysql is backed by a persistent volume.
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 <b>local development instructions.</b>
@@ -191,7 +191,7 @@ output should be something like:
 <br />ß
 
 ``` 
- kubectl port-forward -n web deployment/python-api :8080
+ kubectl port-forward -n web deployment/go-api :8080
  Forwarding from 127.0.0.1:39227 -> 8080
  Forwarding from [::1]:39227 -> 8080`
  ```
