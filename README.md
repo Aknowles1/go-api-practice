@@ -7,6 +7,60 @@ pre-requisites:
 - Docker 
 - Go
 - Kind
+---------------------------------------------------------------------------------------
+
+<h3>TLDR/Quickstart</h3>
+<br />
+See above for some further exlaination on these commands/the pattern I decided on
+<br />
+install kind:
+https://kind.sigs.k8s.io/docs/user/quick-start/
+<br />
+
+```
+ kind create cluster --config=kind/cluster-spec.yaml
+
+ kubectl apply -f k8s-manifests/mysql-manifests/mysql-ns.yaml
+ kubectl apply -f k8s-manifests/mysql-manifests/mysql-pv-pvc.yaml
+ kubectl apply -f k8s-manifests/mysql-manifests/mysql-secret.yaml
+ kubectl apply -f k8s-manifests/mysql-manifests/mysql.yaml
+
+ kubectl apply -f k8s-manifests/go-api-manifests/web-ns.yaml
+ kubectl apply -f k8s-manifests/go-api-manifests/mysql-secret.yaml
+ kubectl apply -f k8s-manifests/go-api-manifests/go-api.yaml
+
+ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+```
+<br />
+
+you may have to wait a little while before deploying this next manifest, as nginx may take a few seconds ot start up for the first time. To verify correct startup, run:
+<br />
+
+
+``` 
+k get po -n ingress-nginx --watch
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-2qhhk        0/1     Completed   0          2m1s
+ingress-nginx-admission-patch-dq7vv         0/1     Completed   0          2m1s
+ingress-nginx-controller-84fd4ff684-g6zws   1/1     Running     0          2m1s
+ ```
+
+<br />
+Output should show the ingress-nginx-controller as running before you can deploy the next manifest
+
+<br />
+
+```kubectl apply -f k8s-manifests/go-api-manifests/ingress.yaml ```
+
+<br />
+
+query API:<br />
+```curl --header "Host: api.com" localhost:80/incriment```
+
+<br />
+the above curl works, as kind is configured to bind the hostport, to the container port thats running kubernetes (kind - Kubernetes-IN-Docker)
+<br />
+As mentioned above, the api will persist the counter upon pod deletion of either mysql or the python api itself, as mysql is backed by a persistent volume.
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 <b>local development instructions.</b>
@@ -187,56 +241,3 @@ apply the ingress for the go api:
 curl endpoint to see count increase:
 ```curl --header "Host: api.com" localhost:80/count```
 
----------------------------------------------------------------------------------------
-<h3>TLDR/Quickstart</h3>
-<br />
-See above for some further exlaination on these commands/the pattern I decided on
-<br />
-install kind:
-https://kind.sigs.k8s.io/docs/user/quick-start/
-<br />
-
-```
- kind create cluster --config=kind/cluster-spec.yaml
-
- kubectl apply -f k8s-manifests/mysql-manifests/mysql-ns.yaml
- kubectl apply -f k8s-manifests/mysql-manifests/mysql-pv-pvc.yaml
- kubectl apply -f k8s-manifests/mysql-manifests/mysql-secret.yaml
- kubectl apply -f k8s-manifests/mysql-manifests/mysql.yaml
-
- kubectl apply -f k8s-manifests/go-api-manifests/web-ns.yaml
- kubectl apply -f k8s-manifests/go-api-manifests/mysql-secret.yaml
- kubectl apply -f k8s-manifests/go-api-manifests/go-api.yaml
-
- kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-```
-<br />
-
-you may have to wait a little while before deploying this next manifest, as nginx may take a few seconds ot start up for the first time. To verify correct startup, run:
-<br />
-
-
-``` 
-k get po -n ingress-nginx --watch
-NAME                                        READY   STATUS      RESTARTS   AGE
-ingress-nginx-admission-create-2qhhk        0/1     Completed   0          2m1s
-ingress-nginx-admission-patch-dq7vv         0/1     Completed   0          2m1s
-ingress-nginx-controller-84fd4ff684-g6zws   1/1     Running     0          2m1s
- ```
-
-<br />
-Output should show the ingress-nginx-controller as running before you can deploy the next manifest
-
-<br />
-
-```kubectl apply -f k8s-manifests/go-api-manifests/ingress.yaml ```
-
-<br />
-
-query API:<br />
-```curl --header "Host: api.com" localhost:80/incriment```
-
-<br />
-the above curl works, as kind is configured to bind the hostport, to the container port thats running kubernetes (kind - Kubernetes-IN-Docker)
-<br />
-As mentioned above, the api will persist the counter upon pod deletion of either mysql or the python api itself, as mysql is backed by a persistent volume
