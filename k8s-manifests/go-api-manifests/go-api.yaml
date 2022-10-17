@@ -1,0 +1,68 @@
+#deploy/expose go api
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api
+  namespace: web
+spec:
+  selector:
+    matchLabels:
+      app: go-api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: go-api
+    spec:
+      securityContext:
+          runAsUser: 1000
+          runAsGroup: 3000
+          fsGroup: 2000
+      containers:
+      #pulling from my public dockerhub, using image digest to be sure we pull same image each time 
+      - image: docker.io/aknowles99/go-api-practice:0.5
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        name: go-api
+        env:   
+        #application reads some config from env vars, passing these in   
+        - name: MYSQLPORT
+          value: "3306"
+        - name: MYSQLHOST
+          value: mysql.mysql.svc.cluster.local
+        #Just referencing the same secret that mysql is using 
+        #again this would not go to production, 
+        #my prefered choice would be a vault sidecar providing secrets 
+        - name: MYSQLPWD
+          valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+        ports:
+        - containerPort: 8080
+          name: go-api
+        securityContext:
+          allowPrivilegeEscalation: false
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-api
+  namespace: web
+spec:
+    selector:
+      app: go-api
+    ports:
+      - name: go-api
+        protocol: "TCP"
+       # Port accessible inside cluster
+        port: 8080
+       # Port to forward to inside the pod
+        targetPort: go-api

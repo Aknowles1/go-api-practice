@@ -1,0 +1,14 @@
+version: "3"
+services:
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+       - 3306:3306
+volumes:
+  mysql:
+# Keeping around for anyone who wants to do local development without kubernetes
