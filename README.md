@@ -248,3 +248,4 @@ TODO:
 - replace text file html body storage with a db record 
 - ammed the edit/save funtions to write to mysql
 - Seperate docker file into multi stage builf 
+- Add CSS and improve html so it doesnt look like an 8 year old did it 
