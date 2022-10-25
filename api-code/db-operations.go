@@ -55,6 +55,7 @@ func (a *application) IncrementHitCount(w http.ResponseWriter, r *http.Request) 
 		//exit function if the method (i.e r.Method, wasnt "GET")
 		return
 	}
+
 	fmt.Println("Incrementing Record.........")
 	db := connectDB()
 

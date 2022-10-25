@@ -14,8 +14,10 @@ func startAPI() {
 	app := application{}
 	//create new mux
 	mux := http.NewServeMux()
-	//route traffic that hits /getbooks to the getBooks method
+
+	//route traffic that hits /getbooks to the getBooks methodß
 	mux.HandleFunc("/incriment", app.IncrementHitCount)
+	mux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("./static"))))
 	//Advertise webserver on localhost:8080, so localhost:8080/incriment
 	//will trigger incrimentHitCount() method
 	http.ListenAndServe(":8080", mux)

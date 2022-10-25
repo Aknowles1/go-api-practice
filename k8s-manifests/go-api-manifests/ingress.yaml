@@ -8,11 +8,10 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: api.com
-    http:
+  - http:
       paths:
       - pathType: Prefix
-        path: "/incriment"
+        path: "/"
         backend:
           service:
             name: go-api
