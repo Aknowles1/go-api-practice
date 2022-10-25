@@ -21,7 +21,7 @@ spec:
           fsGroup: 2000
       containers:
       #pulling from my public dockerhub, using image digest to be sure we pull same image each time 
-      - image: docker.io/aknowles99/go-api-practice:0.75
+      - image: docker.io/aknowles99/go-api-practice:1.21
         resources:
           requests:
             memory: "64Mi"

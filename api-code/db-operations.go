@@ -56,7 +56,7 @@ func (a *application) IncrementHitCount(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	fmt.Println("Incrementing Record.........")
+	fmt.Println("Incrementing Record....")
 	db := connectDB()
 
 	_, err := db.Exec("USE HITCOUNT")

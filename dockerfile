@@ -11,7 +11,7 @@ COPY ./api-code/go.sum .
 
 RUN go mod download
 
-COPY ./api-code/ .
+COPY --chmod=777 ./api-code/ .
 
 # Build the Go app
 RUN go build -o ./out/api .
